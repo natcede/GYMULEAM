@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #4A90E2, #8B008B);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out;
+        }
+
+        input {
+            margin-bottom: 15px;
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(to right, #4A90E2, #8B008B);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background: linear-gradient(to right, #8B008B, #4A90E2);
+        }
+
+        #mensaje {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #ff6347; /* Tomato */
+        }
+
+        label:hover {
+            color: #8B008B; /* DarkMagenta */
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        
+        <h2>Registro de Usuario</h2>
+        
+        <form id="registroForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
+
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" placeholder="Ingrese su apellido" required>
+
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" placeholder="Ingrese su dirección" required>
+
+            <label for="correo">Correo electrónico:</label>
+            <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
+
+            <label for="contrasena">Contraseña:</label>
+            <input type="password" id="contrasena" name="contrasena" placeholder="Ingrese su contraseña" required>
+
+            <input type="submit" value="Registrar">
+            <p>¿Ya tienes cuenta? <a href="login.html">Inicia</a></p>
+        </form>
+        <div id="mensaje"></div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const registroForm = document.getElementById("registroForm");
+                const mensajeDiv = document.getElementById("mensaje");
+
+                registroForm.addEventListener("submit", function(event) {
+                    event.preventDefault();
+
+                    // Validación adicional antes de enviar la solicitud al servidor
+                    if (validarFormulario()) {
+                        const formData = new FormData(registroForm);
+
+                        fetch("registrar_usuario.php", {
+                            method: "POST",
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Mostrar mensaje de registro exitoso
+                                mostrarMensaje(true, data.message);
+                            } else {
+                                // Mostrar mensaje de error
+                                mostrarMensaje(false, data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error de red:", error);
+                            mostrarMensaje(false, "Error de red: " + error.message);
+                        });
+                    }
+                });
+
+                function validarFormulario() {
+                    // Puedes agregar aquí más validaciones según tus requisitos
+                    const contrasenaInput = document.getElementById("contrasena");
+                    const contrasena = contrasenaInput.value;
+
+                    if (contrasena.length < 8 || !/[A-Z]/.test(contrasena)) {
+                        mostrarMensaje(false, "La contraseña debe tener al menos 8 caracteres y contener al menos una letra mayúscula.");
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                function mostrarMensaje(esExitoso, mensaje) {
+                    // Muestra mensajes de éxito o error en el formulario
+                    mensajeDiv.textContent = mensaje;
+                    mensajeDiv.style.color = esExitoso ? "#4caf50" : "#ff6347"; /* Green or Tomato */
+                }
+            });
+        </script>
+        <nav>
+            <a href="principal.html" onclick="scrollToSection('seccion1')">regresar</a>
+        </nav>
+    </div>
+</body>
+</html>
